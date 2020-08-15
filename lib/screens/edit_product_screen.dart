@@ -42,6 +42,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           'price': newVariable.price.toString(),
           'description': newVariable.description,
           //'imageUrl': newVariable.imageUrl,
+          'imageUrl': '',
         };
         _imageUrlController.text = newVariable.imageUrl;
       }
@@ -196,7 +197,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     ),
                     Expanded(
                       child: TextFormField(
-                        initialValue: initValue['imageUrl'],
+                        //initialValue: initValue['imageUrl'],
                         decoration: InputDecoration(
                           labelText: 'Image URL',
                         ),
