@@ -126,6 +126,7 @@ class Products with ChangeNotifier {
     var existingProduct = _items[existingProductIndex];
     _items.removeAt(existingProductIndex);
     http.delete(url).then((value) {
+      if (value.statusCode >= 400) {}
       existingProduct = null;
     }).catchError((error) {
       _items.insert(existingProductIndex, existingProduct);
