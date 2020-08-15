@@ -1,3 +1,4 @@
+import 'package:Shop_App/providers/products.dart';
 import 'package:Shop_App/widgets/app_drawer.dart';
 
 import '../screens/cart_screen.dart';
@@ -17,6 +18,31 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var showFavourites = false;
+  var isInit = true;
+  var isLoading = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (isInit) {
+      setState(() {
+        isLoading = true;
+      });
+      Provider.of<Products>(context).fetchAndSetData().then((value) {
+        setState(() {
+          isLoading = false;
+        }); //async and await functionality will not work here then is the only option
+      });
+    }
+    isInit = false;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +80,9 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ProductsGrid(showFavourites),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ProductsGrid(showFavourites),
     );
   }
 }
