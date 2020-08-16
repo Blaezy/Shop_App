@@ -58,6 +58,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                     showFavourites = false;
                 });
               },
+              icon: Icon(Icons.more_vert),
               itemBuilder: (_) => [
                     PopupMenuItem(
                       child: Text('Only Favourites'),
