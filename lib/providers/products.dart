@@ -78,9 +78,11 @@ class Products with ChangeNotifier {
     }
   }
 
-  Future<void> fetchAndSetData() async {
+  Future<void> fetchAndSetData([bool filterByUser = false]) async {
+    final String filteredOrNot =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     final url =
-        'https://shopapp-e8259.firebaseio.com/Products.json?auth=$authToken';
+        'https://shopapp-e8259.firebaseio.com/Products.json?auth=$authToken&$filteredOrNot';
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -122,6 +124,7 @@ class Products with ChangeNotifier {
             'imageUrl': newPro.imageUrl,
             'description': newPro.description,
             'price': newPro.price,
+            'creatorId': userId
             //'isFavourite': newPro.isFavourite
           },
         ),
