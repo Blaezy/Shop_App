@@ -40,6 +40,13 @@ class Products with ChangeNotifier {
     //       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     // ),
   ];
+  final String authToken;
+  final userId;
+  Products(
+    this.authToken,
+    this.userId,
+    this._items,
+  );
 //we dont wnat to let other widget directly access/modify the list of products.Hence we added a getter to reflect the changes.
   List<Product> get items {
     return [..._items];
@@ -57,7 +64,8 @@ class Products with ChangeNotifier {
     final index = _items.lastIndexWhere(
         (pro) => pro.id == id); //returns index of the product to be edited
     if (index >= 0) {
-      final url = 'https://shopapp-e8259.firebaseio.com/Products/$id.json';
+      final url =
+          'https://shopapp-e8259.firebaseio.com/Products/$id.json?auth=$authToken';
       await http.patch(url,
           body: json.encode({
             'title': newpro.title,
@@ -71,10 +79,18 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetData() async {
-    const url = 'https://shopapp-e8259.firebaseio.com/Products.json';
+    final url =
+        'https://shopapp-e8259.firebaseio.com/Products.json?auth=$authToken';
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      if (extractedData == null) {
+        return;
+      }
+      var curl =
+          'https://shopapp-e8259.firebaseio.com/UserFavorites/$userId.json?auth=$authToken';
+      final favoriteResponse = await http.get(curl);
+      final extractedFavouriteData = json.decode(favoriteResponse.body);
       final List<Product> loadedProduct = [];
       extractedData.forEach((prodID, prodData) {
         loadedProduct.add(Product(
@@ -83,7 +99,9 @@ class Products with ChangeNotifier {
             description: prodData['description'],
             imageUrl: prodData['imageUrl'],
             price: prodData['price'],
-            isFavourite: prodData['isFavourite']));
+            isFavourite: extractedFavouriteData == null
+                ? false
+                : extractedFavouriteData[prodID] ?? false));
       });
       _items = loadedProduct;
       notifyListeners();
@@ -93,7 +111,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product newPro) async {
-    const url = 'https://shopapp-e8259.firebaseio.com/Products.json';
+    final url =
+        'https://shopapp-e8259.firebaseio.com/Products.json?auth=$authToken';
     try {
       final value = await http.post(
         url,
@@ -103,7 +122,7 @@ class Products with ChangeNotifier {
             'imageUrl': newPro.imageUrl,
             'description': newPro.description,
             'price': newPro.price,
-            'isFavourite': newPro.isFavourite
+            //'isFavourite': newPro.isFavourite
           },
         ),
       );
@@ -121,7 +140,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final url = 'https://shopapp-e8259.firebaseio.com/Products/$id.json';
+    final url =
+        'https://shopapp-e8259.firebaseio.com/Products/$id.json?auth=$authToken';
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
     var existingProduct = _items[existingProductIndex];
