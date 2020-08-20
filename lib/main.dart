@@ -1,3 +1,4 @@
+import 'package:Shop_App/helpers/custom_route_transitions.dart';
 import 'package:Shop_App/providers/auth.dart';
 import 'package:Shop_App/providers/cart.dart';
 import 'package:Shop_App/providers/orders.dart';
@@ -44,7 +45,11 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
                 primarySwatch: Colors.blue,
                 accentColor: Colors.orange,
-                fontFamily: 'Lato'),
+                fontFamily: 'Lato',
+                pageTransitionsTheme: PageTransitionsTheme(builders: {
+                  TargetPlatform.android: CustomPageTransitionBuilder(),
+                  TargetPlatform.iOS: CustomPageTransitionBuilder()
+                })),
             home: authData.isAuth
                 ? ProductOverviewScreen()
                 : FutureBuilder(

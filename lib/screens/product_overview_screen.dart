@@ -23,7 +23,6 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
